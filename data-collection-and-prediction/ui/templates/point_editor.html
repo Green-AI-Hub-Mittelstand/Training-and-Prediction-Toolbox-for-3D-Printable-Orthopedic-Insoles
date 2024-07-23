@@ -1,0 +1,155 @@
+{% extends "baseUi.html" %}
+{% load bootstrap5 %}
+
+
+{% load bootstrap5 %}
+{% load humanize %}    
+{% load static %}
+{% load l10n %}
+{% load i18n %}
+
+{% load gai_filters %}
+
+
+
+
+{% block extra_head %}
+      <script src="{% static "inspection/fabric.js" %}"></script>
+      <script src="{% static "inspection/handlebars.js" %}"></script>
+      <script src="{% static "inspection/notify.min.js" %}"></script>
+      <script src="{% static "inspection/lightbox.min.js" %}"></script>
+      <!-- Define the Handlebars template -->
+<script id="poiFormTemplate" src="{% static "ui/templates/poiForm.js" %}"></script>
+<script src="{% static "inspection/templates/matchingForm.js" %}"></script>
+
+      {% comment %} <script src="{% static "ui/pointInspectionLeft.js" %}"></script> {% endcomment %}
+      <script src="{% static "ui/pointInspectionUI.js" %}"></script>
+      {% comment %} <script src="{% static "inspection/footprintMatching.js" %}"></script> {% endcomment %}
+      
+      <link rel="stylesheet" href="{% static "inspection/inspection.css" %}">
+      <link rel="stylesheet" href="{% static "inspection/lightbox.min.css" %}">
+
+      <script>
+        var foamPointChoices = {{foamPoints|safe}};
+        var foamPointChoicesShort = {{foamPointsShort|safe}};
+      </script>
+
+{% endblock extra_head %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url "landingUI" %}">Übersicht</a></li>
+              <li class="breadcrumb-item " aria-current="page">
+                <a href="{% url 'customer' customer.id %}">
+                {{ customer.first_name }} {{customer.last_name  }}</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Einlage {{ insole.id }}</li>
+            </ol>
+          </nav>
+    </div>
+    <div class="col" style="display: flex; flex-direction:row; justify-content:flex-end; ">
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="#" class="btn btn-primary active" aria-current="page"><i class="fa-solid fa-location-pin"></i> Schlüsselpunkte</a>
+            <a href="{% url "param_editor" insole.id %}" class="btn btn-primary"><i class="fa-solid fa-sliders"></i> Parameter</a>
+            
+          </div>
+
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col">
+
+        <h2>Schlüsselpunkte bearbeiten</h2>
+        
+        
+    </div>
+</div>
+
+    
+<div class="row">
+    <div class="col">
+        <h3>Linker Fuß</h3>
+        <div class="point-identifier-container row" id="points-left" >
+
+        </div>
+
+        
+    </div>
+
+
+    
+{% comment %} </div> {% endcomment %}
+
+
+{% comment %} <div class="row"> {% endcomment %}
+    <div class="col">
+        
+        <h3>Rechter Fuß</h3>
+        <div class="point-identifier-container row" id="points-right" >
+
+        </div>
+
+        
+    </div>
+
+
+    
+</div>
+
+
+<br>
+<br>
+<br>
+<br>
+
+<script>
+
+            
+
+    var leftPoints = {{leftPoints | safe }};
+    var rightPoints = {{rightPoints | safe }};
+    var initialZoom = 0.28;
+    var width = 450;
+    var height=850;
+
+    renderPointEditor("points-left", "{% url "render20percentNativeCSVUI" insole_id=insole.id foot="left" %}?color=palevioletred&crop=false",  leftPoints, "left", {{insole.id}}, true, initialZoom, width, height);
+    renderPointEditor("points-right", "{% url "render20percentNativeCSVUI" insole_id=insole.id foot="right" %}?color=palevioletred&crop=false", rightPoints, "right", {{insole.id}}, true, initialZoom, width, height);
+
+
+</script>
+
+
+<script>
+    $(function(){
+        
+    });
+</script>
+    
+    
+{% comment %} 
+    <hr>
+    Von Teilnehmer kopieren
+
+    <form method="post" action="{% url "new_customer_insoles_copy_from_participant" customer.id %}">
+        {% csrf_token %}    
+        <select  name="participant" >
+            {% for participant in participants  %}
+                <option value="{{participant.id}}">{{ participant.public_id }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value = "Kopieren"/>
+    </form> {% endcomment %}
+
+
+
+
+{% endblock content %}

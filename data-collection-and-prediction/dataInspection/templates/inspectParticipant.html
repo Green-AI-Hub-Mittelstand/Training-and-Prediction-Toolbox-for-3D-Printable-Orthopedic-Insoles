@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load humanize %}    
+{% load static %}
+{% load l10n %}
+
+
+
+{% block extra_head %}
+      <script src="{% static "inspection/fabric.js" %}"></script>
+      <script src="{% static "inspection/handlebars.js" %}"></script>
+      <script src="{% static "inspection/notify.min.js" %}"></script>
+      <script src="{% static "inspection/lightbox.min.js" %}"></script>
+      <!-- Define the Handlebars template -->
+<script id="poiFormTemplate" src="{% static "inspection/templates/poiForm.js" %}"></script>
+<script src="{% static "inspection/templates/matchingForm.js" %}"></script>
+
+      <script src="{% static "inspection/pointInspection.js" %}"></script>
+      <script src="{% static "inspection/footprintMatching.js" %}"></script>
+      
+      <link rel="stylesheet" href="{% static "inspection/inspection.css" %}">
+      <link rel="stylesheet" href="{% static "inspection/lightbox.min.css" %}">
+
+      <script>
+        var foamPointChoices = {{foamPoints|safe}};
+        var foamPointChoicesShort = {{foamPointsShort|safe}};
+      </script>
+{% endblock extra_head %}
+
+{% block content %}
+
+
+
+
+<div class="row">
+ <div class="col">
+    <h2>{{ participant }}</h2>
+ </div>
+    
+</div>
+
+<div class="row">
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                <tr>
+                    <th>Erstellt:</th>
+                    <td>{{participant.created}}</td>
+                </tr>
+                <tr>
+                    <th>Alter:</th>
+                    <td>{{ participant.age }}</td>
+                </tr>
+                <tr>
+                    <th>Größe in cm:</th>
+                    <td>{{ participant.height }}</td>
+                </tr>
+                <tr>
+                    <th>Gewicht in kg:</th>
+                    <td>{{ participant.weight }}</td>
+                </tr>
+                <tr>
+                    <th>Geschlecht:</th>
+                    <td>{{ participant.gender }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn links:</th>
+                    <td>{{ participant.heel_spur_left }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn rechts:</th>
+                    <td>{{ participant.heel_spur_right }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a title="Im Admin bearbeiten"  href="{% url 'admin:participants_participant_change' participant.id %}"><i class="fa-solid fa-table"></i></a>
+                    </td>
+                </tr>
+                
+
+
+            </tbody>
+        </table>
+
+        <a name="" id="" class="btn btn-primary" href="{% url "inspectInsole" participant.id %}" role="button"><i title="Einlage einstellen" class="fa-solid fa-shoe-prints"></i> zur Einlage</a>
+    </div>
+
+
+
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                
+
+
+
+    <tr>
+        <th>Verkürzungsausgleich links in cm:</th>
+        <td>{{ participant.leg_shortening_left }}</td>
+    </tr>
+    <tr>
+        <th>Verkürzungsausgleich rechts in cm:</th>
+        <td>{{ participant.leg_shortening_right }}</td>
+    </tr>
+    <tr>
+        <th>Schuhgröße:</th>
+        <td>{{ participant.shoe_size }}</td>
+    </tr>
+    <tr>
+        <th>Schmerzpunkte:</th>
+        <td>{{ participant.pain_points }}</td>
+    </tr>
+    {% if participant.pain_points_render %}
+    <tr>
+        <th>Schmerzpunkte Datei:</th>
+        <td><a href="{{ participant.pain_points_render.url }}" target="_blank">anzeigen</a></td>
+    </tr>  
+    {% else  %}
+    
+    {% endif %}
+    
+    <tr>
+        <th>Kommentare Teilnehmer:</th>
+        <td>{{ participant.comments_participant }}</td>
+    </tr>
+    <tr>
+        <th>Kommentare Experimenter:</th>
+        <td>{{ participant.comments_experimenter }}</td>
+    </tr>
+
+
+
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col">
+        <table>
+            <tr>
+                <td><a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}" data-lightbox="foam" data-title="Linker Fuß">
+                    <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}" height="100px" />
+                </a></td>
+                <td><a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}" data-lightbox="foam" data-title="Rechter Fuß">
+                    <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}" height="100px" />
+                </a></td>
+                <td><a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}" data-lightbox="foam" data-title="Beide Füße">
+                    <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}" height="100px" />
+                </a>
+        </td>
+        <td>
+            {% if participant.pain_points_render %}
+        <a href="{{ participant.pain_points_render.url }}" data-lightbox="foam" data-title="Schmerzpunkte">
+            <img src="{{ participant.pain_points_render.url }}" height="100px" />
+        </a>
+
+        {% endif %}
+        </td>
+            </tr>
+            <tr>
+                <td><a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}"><i class="fa-solid fa-download"></i></a></td>
+                <td><a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}"><i class="fa-solid fa-download"></i></a></td>
+                <td><a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}"><i class="fa-solid fa-download"></i></a></td>
+            </tr>
+        </table>
+
+
+        
+        
+        <script>
+            lightbox.option({
+              'resizeDuration': 200,
+              'fadeDuration':200,
+              'wrapAround': true
+            })
+        </script>
+        
+    </div>
+    
+</div>
+
+
+<div class="row">
+    <div class="col">
+        <h4>Schaumabdruck links</h4><br>
+        
+        <div class="point-identifier-container row" id="points-left" >
+
+        </div>
+        
+        <br><hr><br>
+        <h4>Schaumabdruck rechts</h4><br>
+        <div class="point-identifier-container row" id="points-right" >
+
+        </div>
+
+        <script>
+
+            
+
+            var leftPoints = {{leftPoints | safe }};
+            var rightPoints = {{rightPoints | safe }};
+
+            var initialZoom = 0.30;
+            var width = 500;
+            var height=950;
+
+            renderPointEditor("points-left", "{{ participant.analyzedFoamPrint.leftFoot.url }}",  leftPoints, "left", {{participant.public_id}}, true, initialZoom, width, height);
+            renderPointEditor("points-right", "{{ participant.analyzedFoamPrint.rightFoot.url }}", rightPoints, "right", {{participant.public_id}}, true, initialZoom, width, height);
+
+        </script>
+        
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col">
+        <br><br><br>
+        <h3>Messplatten Abdrücke</h3>
+        
+    </div>
+</div>
+
+{% for training_set in participant.trainingData.all  %}
+<div class="row">
+    <div class="col">
+        <br><br><hr>
+        {{ training_set.id }} <a href="{% url 'renderAlignment'  training_set.id  %}">Vorschau mapping</a><br>
+        {{ training_set.id }} <a href="{% url "render20percentNativeCSV" training_set.pressurePlate.uploadedFile.id %}?color=green">Vorschau Pressure plate</a><br>
+        Fuß: {{ training_set.foot }}<br>
+        Typ: {{ training_set.pressure_type }}<br>
+        CSV: {{ training_set.pressurePlate.uploadedFile.file.path }}<br>
+        <div class="training-data-editor row" id="training_data_{{ training_set.id }}" 
+        attr-id="{{ training_set.id }}" 
+        attr-pressure-foot="{{ training_set.foot }}"
+        attr-participant="{{ training_set.participant.public_id }}"
+        attr-pressure-type="{{ training_set.pressure_type }}"
+        attr-foamprint-url="{{ training_set.footPrintUrl }}"
+        attr-foamprint-url-enhanced="{{ training_set }}"
+        attr-foamprint-x="{{ training_set.pressure_x | unlocalize }}"
+        attr-foamprint-y="{{ training_set.pressure_y | unlocalize}}"
+        attr-foamprint-rot="{{ training_set.pressure_rot | unlocalize}}"
+        attr-fit_quality="{{ training_set.fit_quality}}"
+        attr-pressure-plate-url="{% url "render20percentNativeCSV" training_set.pressurePlate.uploadedFile.id %}?color=green"
+        attr-pressure-plate-filename="{{ training_set.pressurePlate.uploadedFile.file.path }}"
+        ></div>
+
+
+
+        <br><br>
+    </div>
+</div>
+{% endfor %}
+  
+    <script>
+        var editors = [];
+
+        $('.training-data-editor').each(function(i,e){
+            var containerId = $(e).attr('id');
+            
+            var id = $(e).attr('attr-id');
+            var foot = $(e).attr('attr-pressure-foot');
+            var participant_id = $(e).attr('attr-participant');
+            var foamprintUrl = $(e).attr('attr-foamprint-url');
+            var foamprintUrlEnhanced = $(e).attr('attr-foamprint-url-enhanced');
+            var pressurePlateUrl = $(e).attr('attr-pressure-plate-url');
+            var filename = $(e).attr('attr-pressure-plate-filename');
+            var fit_quality = $(e).attr('attr-fit_quality');
+            
+
+            var x = $(e).attr('attr-foamprint-x');
+            var y = $(e).attr('attr-foamprint-y');
+            var rot = $(e).attr('attr-foamprint-rot');
+            
+            console.log(id, foot, foamprintUrl, pressurePlateUrl, {x,y,rot}, filename, fit_quality, participant_id);
+
+            var points = [];
+            if(foot == "left"){
+                points = leftPoints;
+
+            }else{
+                points = rightPoints;
+            }
+
+            var initialZoom = 0.30;
+            var width = 500;
+            var height=950;
+
+
+            var editor =matchingEditor(containerId, foamprintUrl,foamprintUrlEnhanced,  points, pressurePlateUrl, foot, id,  {x,y,rot}, filename , fit_quality, participant_id,  initialZoom, width, height);
+
+            editors.push(editor);
+
+        })
+    </script>
+
+
+{% endblock content %}
+    

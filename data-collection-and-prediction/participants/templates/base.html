@@ -1,0 +1,82 @@
+{% load static %}
+{% load bootstrap5 %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FootRecorder 
+    {% block extra_title %}
+      
+    {% endblock extra_title %}
+      </title>
+    <link href="{% static 'fa/css/fontawesome.css' %}"  rel="stylesheet">
+    <link href="{% static 'fa/css/brands.css' %}"  rel="stylesheet">
+    <link href="{% static 'fa/css/solid.css' %}"  rel="stylesheet">
+
+
+    <script src="{% static 'popper.min.js' %}"></script>
+    <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}"  rel="stylesheet">
+
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+    
+    <script src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
+    <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="{% static "base.css" %}">
+    {% block extra_head %}
+      
+    {% endblock extra_head %}
+      
+  </head>
+  <body>
+
+    {% block heading %}
+
+    {% if request.user.is_superuser %}
+
+    <!-- As a heading -->
+<nav class="navbar bg-body-tertiary">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1"><a href="/">FootRecorder</a></span>
+    <a  class="btn btn-outline-primary" href="{% url "recording-instructions" %}">Anleitung Aufzeichnung</a>
+    <div class="d-flex" >
+      <div class="btn-group" role="group" aria-label="Basic outlined example">
+        <a  class="btn btn-outline-primary" href="/account/two_factor/">Profil</a>
+        <a  class="btn btn-outline-primary" href="{% url "participant_overview" %}">Teilnehmerübersicht</a>        
+        <a  class="btn btn-outline-primary" href="{% url "landingUI" %}">UI</a>        
+        
+        
+
+        <a  class="btn btn-outline-primary" href="/admin">Admin</a>        
+      </div>
+    </div>
+  </div>
+</nav>
+
+{% endif %}
+{% endblock heading %}
+  <div class="container">
+    {% bootstrap_messages %}
+  </div>
+
+    <div class="container">
+      {% block content %}
+      
+      {% endblock content %}
+        
+    </div>
+
+    <div class="container-fluid">
+      {% block content_fluid %}
+      
+      {% endblock content_fluid %}
+        
+    </div>
+      
+    <script>
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+  </body>
+</html>

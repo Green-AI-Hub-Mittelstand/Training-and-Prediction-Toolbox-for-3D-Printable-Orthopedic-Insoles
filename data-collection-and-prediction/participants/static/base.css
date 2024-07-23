@@ -1,0 +1,13 @@
+.navbar{
+    margin-bottom:30px;
+}
+
+
+.logo-container{
+    display:flex;
+    flex-direction: row;
+    justify-content: right;
+    column-gap: 20px;
+
+    padding-bottom:20px;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Task Progress</title>
+</head>
+<body>
+    <div id="progress"></div>
+
+    <script>
+        const eventSource = new EventSource('/ui/insoles/longTask');
+        const progressDiv = document.getElementById('progress');
+
+        eventSource.onmessage = function(event) {
+            progressDiv.innerHTML = event.data;
+        };
+
+        eventSource.onerror = function(error) {
+            console.error('EventSource failed:', error);
+            eventSource.close();
+        };
+    </script>
+</body>
+</html>

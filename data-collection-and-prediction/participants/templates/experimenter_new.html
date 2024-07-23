@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'experimenter/experimenter.css' %}">
+{% endblock extra_head %}
+  
+
+{% block content %}
+<script>
+  var participantId = {{participant.id}};
+</script>
+  <h1>Datenerhebung</h1>
+  <br />
+  <h2>Teilnehmer: {{ participant.public_id }} | <a target="_blank" href="{% url 'admin:participants_participant_change' participant.id %}">bearbeiten</a></h2> erstellt vor {{ participant.created |timesince }}
+  <br /><br />
+
+  <div class="card {% if participant.signed_dataprotection %}
+  text-bg-success
+    {% endif %}">
+    <h5 class="card-header">1) Datenschutz</h5>
+    <div class="card-body">
+      <h5 class="card-title">Formular unterschreiben</h5>
+      <p class="card-text">Formular unterschrieben: {{ participant.signed_dataprotection }}</p>
+      <a style="cursor:pointer" class="btn btn-primary btn-sm btn-refresh">Aktualisieren</a>
+    </div>
+  </div>
+  <br /><br />
+
+
+  <div class="card {% if participant.filled_out_questionnaire %} text-bg-success {% endif %}">
+    <h5 class="card-header">2) Fragebogen</h5>
+    <div class="card-body">
+      <h5 class="card-title">Fragebogen ausfüllen lassen</h5>
+      <p class="card-text">Fragebogen ausgefüllt: {{ participant.filled_out_questionnaire }}</p>
+      <a style="cursor:pointer" class="btn btn-primary btn-sm btn-refresh">Aktualisieren</a>
+    </div>
+  </div>
+
+  <br /><br />
+
+  <div class="card {% if participant.foam_footprint %} text-bg-success {% endif %} ">
+    <h5 class="card-header">3) Fußabdruck Schaum</h5>
+    <div class="card-body">
+      <h5 class="card-title">Schaumbox mit ID Markieren: {{ participant.public_id }}</h5>
+      <p class="card-text">Abdruck gegeben: {{ participant.foam_footprint }}</p>
+      <a style="cursor:pointer" id="bt_gave_footprint" class="btn btn-primary">Bestätigen</a>
+    </div>
+  </div>
+
+  <br /><br />
+
+  <div class="card {% if participant.pressure_plate_done %} text-bg-success {% endif %} ">
+    <h5 class="card-header">4) Druckmessplatte</h5>
+    <div class="card-body">
+      <h5 class="card-title">Teilnehmer*in über Druckmessplatte laufen UND gehen lassen</h5>
+      <p class="card-text">
+        Hier im Eingabefenster für die "gehen" Aufzeichnung "gehen", bei dem "Wippen" bitte "stehen" im Bemerkungsfeld eintragen.<br>
+        Bei Vorname "GAI" eintragen, bei Nachname die Nummer <b> {{ participant.public_id }}</b>. Vor- und Nachname könnena auch vertauscht werden - egal.
+
+      </p>
+      <p class="card-text">
+        
+        Druckmessplatte laufen und gehen: {{ participant.pressure_plate_done }}</p>
+      <a style="cursor:pointer" id="bt_pressure_plate_done" class="btn btn-primary">Bestätigen</a>
+    </div>
+  </div>
+
+  <br /><br />
+
+  <div class="card {% if participant.pressure_plate_upload_done %} text-bg-success {% endif %} ">
+    <h5 class="card-header">5) Export Druckmessplatte |  <a href="#" onclick="window.location.reload()" class="btn btn-small btn-secondary">neu laden</a> </h5>
+    <div class="card-body">
+      <h5 class="card-title">Daten aus Druckmessplatten Software exportieren und hochladen.</h5>      
+      <div style="display:none">
+      <div class="row">
+        <div class="col">
+          <div class="dragdropArea" attr-type="walk_l">Gehen (links)</div>
+        </div>
+        <div class="col">
+          <div class="dragdropArea" attr-type="walk_r">Gehen (rechts)</div>
+        </div>
+      </div>
+      
+      <hr>
+
+      <div class="row">
+        <div class="col">
+          <div class="dragdropArea" attr-type="sway_l">Wippen (links)</div>
+        </div>
+        <div class="col">
+          <div class="dragdropArea" attr-type="sway_r">Wippen (rechts)</div>
+        </div>
+      </div>
+      
+
+      <hr>
+      <div class="dragdropArea" attr-type="other">Diverses</div>
+      <hr>
+    </div>
+      {% with counter=participant.pressureCount %}
+
+      <div
+        class="table"
+      >
+        <table
+          class="table "
+        >
+          <thead>
+            <tr>
+              <th scope="col">Typ</th>
+              <th scope="col">Anzahl</th>
+            
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="
+              {% if counter.walk_left < 10 %}
+              table-warning
+              {% endif %}
+            ">
+              <td scope="row">Gehen Links</td>
+              <td>{{ counter.walk_left }}</td>              
+            </tr>
+            
+            <tr class="
+            {% if counter.walk_right < 10 %}
+              table-warning
+              {% endif %}">
+              <td scope="row">Gehen Rechts</td>
+              <td>{{ counter.walk_right }}</td>              
+            </tr>
+            
+            <tr class="
+            {% if counter.sway_left < 1 %}
+              table-warning
+              {% endif %}">
+              <td scope="row">Sway Links</td>
+              <td>{{ counter.sway_left }}</td>              
+            </tr>
+            
+            <tr class="
+            {% if counter.sway_right < 1 %}
+              table-warning
+              {% endif %}">
+              <td scope="row">Sway Right</td>
+              <td>{{ counter.sway_right }}</td>              
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+      {% endwith %}
+      
+      <hr>
+      <div id="available-files">
+        <ul>
+          {% for file in participant.uploads.all %}
+            <li><span class="badge bg-secondary">{{ file.upload_type }}</span>&nbsp;<a href="{{  file.file.url }}">{{ file.file}}</a> | {{ file.created | timesince }} | <a href="{% url 'admin:participants_uploadedfile_change' file.id %}">admin</a> | <a href="{% url "preview_upload" file.id %}">Vorschau</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <a style="cursor:pointer" id="bt_pressure_plate_upload_done" class="btn btn-primary">Bestätigen</a>
+
+      <a name="import-csv" class="btn btn-small btn-primary" href="{% url 'import_csv' participant.id %}#import-csv">CSV Import</a>
+    </div>
+  </div>
+
+
+
+  <br /><br />
+
+  <div class="card {% if participant.participant_compensated %} text-bg-success {% endif %} ">
+    <h5 class="card-header">6) Teilnehmer kompensiert</h5>
+    <div class="card-body">
+      <h5 class="card-title">Teilnehmer kompensieren</h5>
+      <p class="card-text">Gutschein aushändigen, <strong>Teilnehmer*in muss</strong> Empfang quittieren! </p>
+      <a style="cursor:pointer" id="bt_participant_compensated" class="btn btn-primary">Bestätigen</a>
+    </div>
+  </div>
+
+  <br /><br />
+
+
+  <br /><br />
+
+  <div class="card  ">
+    <h5 class="card-header">7) Kommentare</h5>
+    <div class="card-body">
+      <h5 class="card-title">Irgendetwas besonderes zu beachten?</h5>
+<textarea rows=6 id="comments" class="form-control" >{{participant.comments_experimenter}}</textarea><br>
+      <a style="cursor:pointer" id="bt_comments_experimenter" class="btn btn-primary">Speichern <small>wird nicht grün</small></a>
+    </div>
+  </div>
+
+  <br /><br />
+
+  
+  <div class="card  {% if participant.desinfected_everything %} text-bg-success {% endif %} ">
+    <h5 class="card-header">8) Desinfizieren</h5>
+    <div class="card-body">
+      <h5 class="card-title">Alles desinfizieren</h5>
+      <p class="card-text">Druckmessplatte desinfizieren. </p>
+      <a style="cursor:pointer" id="bt_desinfected_everything" class="btn btn-primary">Bestätigen</a>
+    </div>
+  </div>
+  <br /><br />
+    
+  <div class="card ">
+    <h5 class="card-header">9) Abschließen</h5>
+    <div class="card-body">
+      <h5 class="card-title">Teilnehmer*in fertig</h5>
+      Hier geht es wieder zurück zur Übersicht. Dann bitte oben auf "neuer Teilnehmer" klicken und trotz Warnung bestätigen.
+      <a style="cursor:pointer"  class="btn btn-primary" href="{% url "participant_overview" %}">Zur Übersicht</a>
+    </div>
+  </div>
+  <br /><br />
+
+  <script src="{% static 'experimenter/upload.js' %}"></script>
+
+
+  <script>
+
+    $(function(){
+      $(".btn-refresh").on("click", function(){
+        window.location.reload();
+      })
+    })
+
+    $(function(){
+      $('#bt_gave_footprint').on("click", function(){
+        $.ajax({
+          url: Urls.participant_detail(participantId),
+          type: 'PATCH',
+          contentType: 'application/json', // Set the content type if sending JSON data
+          data: JSON.stringify({"foam_footprint":true}), // Convert data to JSON string if needed
+          success: function (data) {
+              console.log('PATCH request successful:', data);
+              window.location.reload();
+          },
+          error: function (error) {
+              alert('Error in PATCH request: '+ error)
+              console.error('Error in PATCH request:', error);
+          }
+        });
+      });
+
+      $('#bt_pressure_plate_done').on("click", function(){
+        $.ajax({
+          url: Urls.participant_detail(participantId),
+          type: 'PATCH',
+          contentType: 'application/json', // Set the content type if sending JSON data
+          data: JSON.stringify({"pressure_plate_done":true}), // Convert data to JSON string if needed
+          success: function (data) {
+              console.log('PATCH request successful:', data);
+              window.location.reload();
+          },
+          error: function (error) {
+              alert('Error in PATCH request: '+ error)
+              console.error('Error in PATCH request:', error);
+          }
+        });
+      });
+
+      $('#bt_pressure_plate_upload_done').on("click", function(){
+        $.ajax({
+          url: Urls.participant_detail(participantId),
+          type: 'PATCH',
+          contentType: 'application/json', // Set the content type if sending JSON data
+          data: JSON.stringify({"pressure_plate_upload_done":true}), // Convert data to JSON string if needed
+          success: function (data) {
+              console.log('PATCH request successful:', data);
+              window.location.reload();
+          },
+          error: function (error) {
+              alert('Error in PATCH request: '+ error)
+              console.error('Error in PATCH request:', error);
+          }
+        });
+      });
+
+      $('#bt_participant_compensated').on("click", function(){
+        $.ajax({
+          url: Urls.participant_detail(participantId),
+          type: 'PATCH',
+          contentType: 'application/json', // Set the content type if sending JSON data
+          data: JSON.stringify({"participant_compensated":true}), // Convert data to JSON string if needed
+          success: function (data) {
+              console.log('PATCH request successful:', data);
+              window.location.reload();
+          },
+          error: function (error) {
+              alert('Error in PATCH request: '+ error)
+              console.error('Error in PATCH request:', error);
+          }
+        });
+      });
+
+      
+      $('#bt_comments_experimenter').on("click", function(){
+        $.ajax({
+          url: Urls.participant_detail(participantId),
+          type: 'PATCH',
+          contentType: 'application/json', // Set the content type if sending JSON data
+          data: JSON.stringify({"comments_experimenter":$('#comments').val()}), // Convert data to JSON string if needed
+          success: function (data) {
+              console.log('PATCH request successful:', data);
+              //window.location.reload();
+          },
+          error: function (error) {
+              alert('Error in PATCH request: '+ error)
+              console.error('Error in PATCH request:', error);
+          }
+        });
+      });
+      
+      $('#bt_desinfected_everything').on("click", function(){
+        $.ajax({
+          url: Urls.participant_detail(participantId),
+          type: 'PATCH',
+          contentType: 'application/json', // Set the content type if sending JSON data
+          data: JSON.stringify({"desinfected_everything":true}), // Convert data to JSON string if needed
+          success: function (data) {
+              console.log('PATCH request successful:', data);
+              window.location.reload();
+          },
+          error: function (error) {
+              alert('Error in PATCH request: '+ error)
+              console.error('Error in PATCH request:', error);
+          }
+        });
+      });
+
+      
+
+    });
+
+  </script>
+{% endblock %}

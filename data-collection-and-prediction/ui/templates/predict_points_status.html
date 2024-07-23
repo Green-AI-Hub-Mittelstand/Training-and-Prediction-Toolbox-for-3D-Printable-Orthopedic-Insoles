@@ -1,0 +1,97 @@
+{% extends "baseUi.html" %}
+{% load bootstrap5 %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+
+        <h2>Schlüsselpunkte</h2>
+        
+        
+    </div>
+</div>
+
+    
+<div class="row">
+    <div class="col">
+        <br><br>
+        <div class="d-flex align-items-center">
+            
+            <strong>Berechnung läuft... </strong><br>
+
+            
+          </div>
+
+          <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+          </div>
+        
+        
+    </div>
+</div>
+
+
+<script>
+
+    var insole_id = {{insole.id}};
+
+    $(function(){
+        
+
+        console.log("los gehts");
+
+        const eventSource = new EventSource(Urls.predict_points_view_generator(insole_id));
+
+        //const eventSource = new EventSource('/ui/insoles/longTask');
+
+
+        const progressDiv = $('#progress-bar');
+
+        function setProgress(s){
+            var f = parseFloat(s);
+            progressDiv.css('width',(s*100) + "%");
+        }
+
+        eventSource.onmessage = function(event) {
+            console.log(event);
+            console.log(event.data);
+            setProgress(event.data);
+            
+
+            if(event.data=="1"){
+                window.location.href=Urls.point_editor(insole_id);
+            }
+        };
+
+        eventSource.onerror = function(error) {
+            console.error('EventSource failed:', error);
+            eventSource.close();
+            window.location.href=Urls.point_editor(insole_id);
+        };
+
+        
+        
+    });
+</script>
+    
+    
+{% comment %} 
+    <hr>
+    Von Teilnehmer kopieren
+
+    <form method="post" action="{% url "new_customer_insoles_copy_from_participant" customer.id %}">
+        {% csrf_token %}    
+        <select  name="participant" >
+            {% for participant in participants  %}
+                <option value="{{participant.id}}">{{ participant.public_id }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value = "Kopieren"/>
+    </form> {% endcomment %}
+
+
+
+
+{% endblock content %}

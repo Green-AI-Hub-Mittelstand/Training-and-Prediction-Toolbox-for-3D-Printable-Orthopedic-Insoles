@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load gai_filters %}
+
+
+
+{% block content %}
+{% load humanize %}    
+
+
+<div class="row">
+  <div class="btn-group" role="group" aria-label="Basic outlined example">
+    <a id="new_participant" class="btn btn-primary" href="{% url 'new_participant' %}">neue(r) Teilnehmer*in</a>
+    <a  class="btn btn-outline-primary" href="{% url "imprintRecorder" %}">Schaumabdrücke hochladen</a>        
+    
+    <a  class="btn btn-outline-primary" href="/admin">Admin</a>        
+  </div>
+    
+</div>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">greenai #</th>
+        <th scope="col"><i title="Admin Interface" class="fa-solid fa-table"></i></th>
+        <th scope="col">videos</th>
+        
+
+        
+        <th scope="col">erstellt</th>
+        <th scope="col">fertiggestellt</th>
+        <th scope="col"><i title="Aktiver Teilnehmer" class="fa-solid fa-person-running"></i></th>
+        {% comment %} <th scope="col">Kommentare</th> {% endcomment %}
+        <th scope="col"><i title="Darf nicht überschrieben werden" class="fa-solid fa-lock"></i></th>
+        <th scope="col"><i title="Dateizuordnung korrekt" class="fa-solid fa-cloud"></i></th>
+        <th scope="col"><i title="Punkte korrekt erkannt" class="fa-solid fa-hand-dots"></i></th>
+
+        
+        <th scope="col"><i title="Druckmessungen einpassen" class="fa-solid fa-camera-rotate"></th>
+        <th scope="col"><i title="Einlage einstellen" class="fa-solid fa-shoe-prints"></i></th>
+
+      </tr>
+    </thead>
+    <tbody>
+        {% for participant in participants %}
+        <tr>
+            <th scope="row"><a style="font-size:10px" href="{% url 'experimenter_p_choice' participant.id %}">{{ participant.id }}</a></th>
+            <th scope="row"><a href="{% url 'experimenter_p_choice' participant.id %}">{{ participant.public_id }}</a></th>
+
+            <td><a title="Im Admin bearbeiten"  href="{% url 'admin:participants_participant_change' participant.id %}"><i class="fa-solid fa-table"></i></a></td>
+
+            <td title="Videos generiert {{ participant.videoProgressString }}">{{ participant.videoProgress | visualize_boolean }}</td>
+
+
+            <td>{{ participant.created | timesince }}</td>
+            {% comment %} <td>{{ participant.completed }}</td> {% endcomment %}
+            {% with counter=participant.pressureCount %}
+            <td>
+              <span
+                class="badge rounded-pill 
+                
+                {% if counter.walk_left > 9 and counter.walk_right > 9 %}
+                  bg-success
+                {% else  %}
+                bg-danger
+                {% endif %}             
+                
+                "
+                >
+                  gehen ({{ counter.walk_left }}/{{ counter.walk_right }})
+                </span
+              >
+
+              <span
+                class="badge rounded-pill 
+                
+                {% if counter.sway_left == 1 and counter.sway_right == 1 %}
+                  bg-success
+                {% else  %}
+                bg-danger
+                {% endif %}             
+                
+                "
+                >
+                  stehen ({{ counter.sway_left }}/{{ counter.sway_right }})
+                </span
+              >
+
+              <span
+              class="badge rounded-pill 
+              
+              {% if counter.foam > 0  %}
+                bg-success
+              {% else  %}
+              bg-danger
+              {% endif %}             
+              
+              "
+              >
+                foam ({{ counter.foam }})
+              </span
+            >
+              
+            </td>
+            {% endwith %}
+            <td>
+              {% if participant.active %}
+              {{ participant.active | visualize_boolean }}
+              {% else  %}
+              
+              {% endif %}        
+              </td>
+            {% comment %} <td width="20%">{{ participant.comments_experimenter }}</td> {% endcomment %}
+            <td title="für Sync Gesperrt">{{ participant.lock_sync | visualize_boolean }}</td>
+            <td title="Dateien okay">{{ participant.files_okay | visualize_boolean }}</td>
+            <td>
+              {% if participant.foamPrintAnalysed %}
+
+              {% with points=participant.analyzedFoamPrint.pointsLeftComplete %}
+
+              <span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="
+                Fehlende Punkte: {{  points.missingPointsNum }} <br>
+                Nicht identifizierte Punkte: {{ points.unidentifiedPointsNum }}<br>
+                Doppelte Punkte: {{ points.duplicatePointsNum }}<br>
+                
+                "
+                
+                >  
+              {{ points.ok | visualize_boolean }}
+            </span>
+            
+            {% endwith %}
+            {% with points=participant.analyzedFoamPrint.pointsRightComplete %}
+            <span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Fehlende Punkte: {{  points.missingPointsNum }} <br>Nicht identifizierte Punkte: {{ points.unidentifiedPointsNum }}<br>
+              Doppelte Punkte: {{ points.duplicatePointsNum }}<br>" >
+              {{ points.ok  | visualize_boolean  }}
+            </span>
+            {% endwith %}
+
+              
+              {% endif %}
+            </td>
+            
+            
+            <td>
+              {% if participant.foamPrintAnalysed %}
+              
+              <div title="{{ participant.alignmentProgress }}%" class="progress" style="height: 3px;">
+                <div class="progress-bar
+                
+                {% if participant.alignmentProgress == 100 %}
+                bg-success
+                {% else %}
+                {% endif %}
+                
+                
+                " role="progressbar" style="width: {{ participant.alignmentProgress }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+
+              <a title="Abdrücke ausrichten"  href="{% url 'inspectParticipant' participant.id %}"><i class="fa-solid fa-camera-rotate"></i></a>
+              {% endif %}  
+            </td>
+
+            <td>
+              {% if participant.foamPrintAnalysed %}
+              <div title="{{ participant.insoleProgress }}%" class="progress" style="height: 3px;">
+                <div class="progress-bar
+                
+                {% if participant.insoleProgress == 100 %}
+                bg-success
+                {% else %}
+                {% endif %}
+                
+                
+                " role="progressbar" style="width: {{ participant.insoleProgress }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>  
+              
+              <a title="Einlage konstruieren"  href="{% url 'inspectInsole' participant.id %}"><i class="fa-solid fa-shoe-prints"></i></a>
+            
+            
+              {% endif %}  
+            </td>
+          </tr>
+        {% endfor %}
+      
+      
+    </tbody>
+  </table>
+    
+  <script>
+    var hasActiveParticipant = {% if hasActive %}  true {% else %} false  {% endif %};
+    
+    $('#new_participant').click(function(e){
+        if(hasActiveParticipant){
+            if(confirm("Es gibt noch eine(n) aktive(n) Teilnehmer*in - trotzdem neu erstellen?")){
+
+            }else{
+                e.preventDefault();
+            }
+        }
+
+    });
+
+  </script>
+  
+    
+{% endblock content %}
+    

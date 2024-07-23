@@ -1,0 +1,76 @@
+{% load static %}
+{% load bootstrap5 %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KI Einlagen
+    {% block extra_title %}
+      
+    {% endblock extra_title %}
+      </title>
+    <link href="{% static 'fa/css/fontawesome.css' %}"  rel="stylesheet">
+    <link href="{% static 'fa/css/brands.css' %}"  rel="stylesheet">
+    <link href="{% static 'fa/css/solid.css' %}"  rel="stylesheet">
+
+    <link href="{% static 'ui/style.css' %}"  rel="stylesheet">
+
+
+    <script src="{% static 'popper.min.js' %}"></script>
+    <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}"  rel="stylesheet">
+
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+    
+    <script src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
+    <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="{% static "base.css" %}">
+    {% block extra_head %}
+      
+    {% endblock extra_head %}
+      
+  </head>
+  <body>
+
+   <br><br>
+  <div class="container">
+    {% bootstrap_messages %}
+  </div>
+
+
+
+    <div class="container">
+
+
+      <div class="row logo-row">
+        <div class="col">
+            <h1>KI Einlagen</h1>
+        </div>
+    
+        <div class="col logo-container">
+            <img height="60px" src="{% static "logos/dfki.png" %}">
+            <img height="60px" src="{% static "logos/herges.png" %}">
+        </div>
+    
+    </div>
+
+      {% block content %}
+      
+      {% endblock content %}
+        
+    </div>
+
+    <div class="container-fluid">
+      {% block content_fluid %}
+      
+      {% endblock content_fluid %}
+        
+    </div>
+      
+    <script>
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+  </body>
+</html>

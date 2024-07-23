@@ -1,0 +1,267 @@
+{% extends 'baseUi.html' %}
+{% load bootstrap5 %}
+{% load humanize %}    
+{% load static %}
+{% load l10n %}
+{% load i18n %}
+
+{% load gai_filters %}
+
+
+
+{% block extra_head %}
+      <script src="{% static "inspection/fabric.js" %}"></script>
+      <script src="{% static "inspection/handlebars.js" %}"></script>
+      <script src="{% static "inspection/notify.min.js" %}"></script>
+      <script src="{% static "inspection/lightbox.min.js" %}"></script>
+      <!-- Define the Handlebars template -->
+<script id="poiFormTemplate" src="{% static "ui/templates/poiForm.js" %}"></script>
+<script src="{% static "inspection/templates/matchingForm.js" %}"></script>
+
+      <script src="{% static "ui/pointInspectionLeft.js" %}"></script>
+      <script src="{% static "ui/pointInspectionRight.js" %}"></script>
+      <script src="{% static "inspection/footprintMatching.js" %}"></script>
+      
+      <link rel="stylesheet" href="{% static "inspection/inspection.css" %}">
+      <link rel="stylesheet" href="{% static "inspection/lightbox.min.css" %}">
+
+      <script>
+        var foamPointChoices = {{foamPoints|safe}};
+        var foamPointChoicesShort = {{foamPointsShort|safe}};
+      </script>
+
+{% endblock extra_head %}
+
+{% block content %}
+
+{% block heading %}
+
+{% if request.user.is_superuser %}
+
+<!-- As a heading -->
+<nav class="navbar bg-body-tertiary">
+<div class="container">
+<span class="navbar-brand mb-0 h1"><a href="/">FootRecorder</a></span>
+<b> {{customer.first_name}} {{customer.last_name}}</b>
+<div class="d-flex" >
+  <div class="btn-group" role="group" aria-label="Basic outlined example">
+    <a  class="btn btn-outline-primary" href="{% url "customer" customer.id%}">Einlagen</a>        
+
+    
+
+    <a  class="btn btn-outline-primary" href="/admin">Admin</a>        
+  </div>
+</div>
+</div>
+</nav>
+
+{% endif %}
+{% endblock heading %}
+
+<div class="row">
+ <div class="col">
+    <h2>{{ insole }}</h2>
+ </div>
+    
+</div>
+
+<div class="row">
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                <tr>
+                    <th>Erstellt:</th>
+                    <td>{{insole.created}}</td>
+                </tr>
+                <tr>
+                    <th>Alter:</th>
+                    <td>{{ customer.age }}</td>
+                </tr>
+                <tr>
+                    <th>Größe in cm:</th>
+                    <td>{{ customer.height }}</td>
+                </tr>
+                <tr>
+                    <th>Gewicht in kg:</th>
+                    <td>{{ customer.weight }}</td>
+                </tr>
+                <tr>
+                    <th>Geschlecht:</th>
+                    <td>{{ customer.gender }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn links:</th>
+                    <td>{{ customer.heel_spur_left }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn rechts:</th>
+                    <td>{{ customer.heel_spur_right }}</td>
+                </tr>
+                
+                
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                
+
+
+
+    <tr>
+        <th>Verkürzungsausgleich links in cm:</th>
+        <td>{{ customer.leg_shortening_left }}</td>
+    </tr>
+    <tr>
+        <th>Verkürzungsausgleich rechts in cm:</th>
+        <td>{{ customer.leg_shortening_right }}</td>
+    </tr>
+    <tr>
+        <th>Schuhgröße:</th>
+        <td>{{ customer.shoe_size }}</td>
+    </tr>
+    <tr>
+        <th>Schmerzpunkte:</th>
+        <td>{{ customer.pain_points }}</td>
+    </tr>
+    {% if customer.pain_points_render %}
+    <tr>
+        <th>Schmerzpunkte Datei:</th>
+        <td><a href="{{ customer.pain_points_render.url }}" target="_blank">anzeigen</a></td>
+    </tr>  
+    
+    {% endif %}
+    
+    <tr>
+        <th>Kommentare Teilnehmer:</th>
+        <td>{{ customer.comments_customer }}</td>
+    </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col">
+        <table>
+
+            <tr>
+                <td>
+                    <a href= "{% url "render20percentNativeCSVUI" insole_id=insole.id foot="left" %}?color=green"><i class="fa-solid fa-download"></i>
+                    <img src="{% url "render20percentNativeCSVUI" insole_id=insole.id foot="right" %}?color=green" height="100px" />
+                </a></td>
+                <td><a href="{% url "render20percentNativeCSVUI" insole_id=insole.id foot="right" %}?color=green"><i class="fa-solid fa-download"></i>
+                    <img src="{% url "render20percentNativeCSVUI" insole_id=insole.id foot="right" %}?color=green" height="100px" />    
+                </a>
+                </td>
+            </tr>
+
+            <tr>
+               
+        <td>
+            {% if customer.pain_points_render %}
+        <a href="{{ customer.pain_points_render.url }}" data-lightbox="foam" data-title="Schmerzpunkte">
+            <img src="{{ customer.pain_points_render.url }}" height="100px" />
+        </a>
+
+        {% endif %}
+        <a class="btn btn-primary " href="{% url "predict_points" customer_id=customer.id insole_id=insole.id %}"><i class="fa-solid fa-shoe-prints"></i> Punkte generieren</a>
+        <br> <br>
+        <a class="btn btn-primary " href="{% url "predict_insole_parameters" customer_id=customer.id insole_id=insole.id %}"><i class="fa-solid fa-shoe-prints"></i> Einlagenparameter generieren</a>
+
+
+        </td>
+            </tr>
+        
+        </table>
+
+
+        
+        
+        <script>
+            lightbox.option({
+              'resizeDuration': 200,
+              'fadeDuration':200,
+              'wrapAround': true
+            })
+        </script>
+        
+    </div>
+    
+</div>
+
+
+<form method="post" class="form">
+{% csrf_token %}
+<div class="row">
+    <div class="col">
+        <h4>Druckdaten links
+        </h4>
+        
+        <br>
+        
+        <div class="point-identifier-container row" id="points-left" >
+
+        </div>
+
+        <div class="col">
+            <h4>Links</h4>
+            {% if insoleParametersFormLeft.errors %}
+            <ul>
+              {% for error in form.errors %} 
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}  
+
+        {% bootstrap_form insoleParametersFormLeft %}
+        
+        <br><hr><br>
+        <h4>Druckdaten rechts</h4><br>
+        
+        <div class="point-identifier-container row" id="points-right" >
+
+        </div>
+
+        {% if insoleParametersFormRight.errors %}
+            <ul>
+              {% for error in form.errors %} 
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}  
+
+        {% bootstrap_form insoleParametersFormRight %}
+        <button type="submit" class="btn btn-primary">
+            Speichern
+          </button>
+        </form>
+
+        <script>
+
+            
+
+            var leftPoints = {{leftPoints | safe }};
+            var rightPoints = {{rightPoints | safe }};
+            var initialZoom = 0.30;
+            var width = 500;
+            var height=950;
+
+            renderPointEditorLeft("points-left", "{% url "render20percentNativeCSVUI" insole_id=insole.id foot="left" %}?color=red&crop=false",  leftPoints, "left", {{customer.id}}, true, initialZoom, width, height);
+            renderPointEditorRight("points-right", "{% url "render20percentNativeCSVUI" insole_id=insole.id foot="right" %}?color=red&crop=false", rightPoints, "right", {{customer.id}}, true, initialZoom, width, height);
+
+
+        </script>
+        
+    </div>
+</div>
+
+{% endblock content %}
+    

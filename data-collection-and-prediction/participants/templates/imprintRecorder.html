@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load bootstrap5 %}
+
+{% block content %}
+    
+<div class="card" style="">
+    <div class="card-body">
+      <h5 class="card-title">Formular vorbereiten</h5>
+      <h6 class="card-subtitle mb-2 text-body-secondary">Hochladen der Schaumabdrücke</h6>
+      <p class="card-text">Start und Endteilnehmer*in wählen um entsprechendes Formular anzuzeigen</p>
+        <div style="width:50%">
+      <form method="GET" action="{% url "imprintRecorder" %}">
+        <div class="row">
+            <div class="col">
+                <select class="form-select" name="start_participant" aria-label="Default select example">
+                    
+                    {% for participant in participants %}
+                        <option {% if start == participant.id %}selected{% endif %}  value="{{participant.id}}">[{{ participant.public_id }}]  {{participant.created |timesince}}</option>
+                    {% endfor %}                    
+                  </select>
+
+              
+            </div>
+            <div class="col">
+                <select class="form-select" name="end_participant" aria-label="Default select example">
+                    
+                    {% for participant in participants %}
+                        <option {% if end == participant.id %}selected{% endif %}   value="{{participant.id}}">[{{ participant.public_id }}] - {{participant.created |timesince}}</option>
+                    {% endfor %}                    
+                  </select>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col"><br>
+                
+                    <button type="submit" class="btn btn-primary">anzeigen</button>
+                
+            </div>
+
+        </div>
+      </form>
+    </div>
+
+      <hr>
+      <div class="row">
+        <form method="POST" action="{% url "imprintRecorder" %}" enctype="multipart/form-data">
+            {% csrf_token %}
+        <div class="col">
+
+            {% for participant in participant_selection %}
+            <div class="card">
+                <h5 class="card-header {% if participant.has_uploaded_foam %}bg-success{% endif %}">[{{ participant.public_id }}] - {{participant.created |timesince}}</h5>
+                <div class="card-body">
+                  <h5 class="card-title">Datei hochladen</h5>
+                  <div class="row">
+                    <div class="col">
+                        <input class="upload_file_input" id="upload_file_input_{{ participant.id }}" attr-pid="{{ participant.id }}" type="file" name="participant_{{ participant.id }}"><br>
+                        <button type="button" class="clear-file btn btn-warning" attr-pid="{{ participant.id }}">leeren</button>
+                    </div>
+                    <div class="col">
+                        <img id="image-preview-{{ participant.id }}" src="#" alt="Image Preview" style="max-width: 300px; max-height: 300px;">
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col">
+                        <hr>
+                        {% for foam in participant.uploaded_foam_imprints %}
+                        <img src="{{ foam.file.url }}" alt="Image Preview" style="max-width: 200px; max-height: 200px;">
+                        {% endfor %}
+                    </div>
+                  </div>
+
+
+                    
+                    
+                </div>
+              </div><br>
+            {% endfor %}
+
+        <div>
+            <input type="hidden" name="start_participant" value="{{ start }}">
+            <input type="hidden" name="end_participant" value="{{ end }}">
+            <button type="submit" class="btn btn-primary">Hochladen</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+    <script>
+
+        function clearFileInput(id) {
+            $('#upload_file_input_'+id).val(null);
+            $('#image-preview-'+id).attr('src', '#');
+        }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#image-preview-'+$(input).attr('attr-pid')).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function () {
+            $(".upload_file_input").change(function () {
+
+                readURL(this);
+            });
+
+            $('.clear-file').click(function(){
+                clearFileInput($(this).attr('attr-pid'));
+            });
+        });
+
+
+    </script>
+{% endblock content %}

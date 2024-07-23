@@ -1,0 +1,54 @@
+{% load static %}
+{% load i18n %}
+<div>
+    <div class="coordinate-editor">
+        <div class="image" id="{{ widget.attrs.id }}_image">
+            <div id="marking-editor">
+                <div id="close-button" class="btn btn-secondary btn-sm">X</div>
+
+                <div id="select-pain-container">
+                    <label for="painScale">{% trans "Schmerzskala" %}</label>
+<select id="painScale" name="painScale">
+    <option value="1">(1) {% trans "Kein Schmerz" %}</option>
+    <option value="2">(2) {% trans "Geringer Schmerz" %}</option>
+    <option value="3">(3) {% trans "Mittlerer Schmerz" %}</option>
+    <option value="4">(4) {% trans "Starker Schmerz" %}</option>
+    <option value="5">(5) {% trans "Sehr starker Schmerz" %}</option>
+</select><br><br>
+<a id="bt-save-marking-attr" class="btn btn-sm btn-success">{% trans "Speichern" %}</a>
+<a id="bt-delete-marking-attr" class="btn btn-sm btn-warning">{% trans "Löschen" %}</a>
+
+                </div>
+                
+
+            </div>
+        </div>
+        
+        
+    </div>
+    
+    <input type="hidden" name="{{ widget.name }}" value="{{ widget.value }}" id="{{ widget.attrs.id }}_input">
+</div>
+
+<script>
+    var widgetId = "{{ widget.attrs.id }}";
+</script>
+
+<script src="{% static 'widget/coordinates.js' %}"></script>
+<link rel="stylesheet" href="{% static "widget/coordinates.css" %}">
+
+<style>
+    .coordinate-editor{
+        {% comment %} background-color:blue; {% endcomment %}
+    }
+    
+    .coordinate-editor .image{
+        position:relative;
+        z-index:1;
+        width: {{  widget.attrs.width }}px;
+        height: {{  widget.attrs.height }}px;
+        background-image:url({% static widget.attrs.image_url %});
+    
+        cursor: crosshair;
+    }
+</style>

@@ -1,0 +1,6 @@
+{
+  "api_url": "https://xxx/api",
+  "api_token": "", # User Token
+  "api_secret": "", # GreenAI Secret
+  
+}

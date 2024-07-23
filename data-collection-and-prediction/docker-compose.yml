@@ -1,0 +1,79 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    volumes:
+      - ./:/code
+      - staticFiles:/srv/static
+    #ports:
+    #  - 10070:8000
+    command: sh -c "cd /code && python manage.py migrate && python manage.py collectstatic --noinput  && gunicorn dataCollection.wsgi --bind 0.0.0.0:8000"
+    #command: sh -c "cd /code && python manage.py migrate && python manage.py collectstatic --noinput  && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+
+  worker:
+    build: .
+    volumes:
+      - ./:/code
+    command: sh -c "cd /code && celery -A dataCollection  worker --concurrency=2 -l INFO -n worker-general"
+    #command: sh -c "cd /code && python manage.py migrate && python manage.py collectstatic --noinput  && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    
+
+  video-worker:
+    build: .
+    volumes:
+      - ./:/code
+    command: sh -c "cd /code && celery -A dataCollection  worker --concurrency=2 -l INFO -n worker-videos -Q videos"
+    #command: sh -c "cd /code && python manage.py migrate && python manage.py collectstatic --noinput  && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+
+
+  nginx: #for static files
+    image: nginx
+    volumes:
+      - ./docker-proxy/nginx.conf:/etc/nginx/conf.d/django.conf
+      - staticFiles:/srv/static/
+    ports:
+      - "10070:81"
+    restart: always
+    depends_on:
+        - web
+
+  redis:
+    image: redis
+    restart: always
+
+  predictions:
+    build: ./predictions
+    command: sh -c "cd /code && python3 main.py"
+    volumes: 
+      - ./predictions:/code
+    ports:
+      - "10071:5000"
+      - "9999:8888"
+
+  postgres:
+    image: postgres:16.3
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=greenai
+      - POSTGRES_USER=greenai
+
+  
+volumes:
+  staticFiles:

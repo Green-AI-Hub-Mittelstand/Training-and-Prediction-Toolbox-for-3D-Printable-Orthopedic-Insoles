@@ -1,0 +1,32 @@
+{% extends "baseUi.html" %}
+{% load bootstrap5 %}
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <h2>
+            Von Teilnehmer*in kopieren
+        </h2>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col">
+        <br>
+        <form method="POST">
+            {% csrf_token %}
+            <select class="form-control" name="participant" id="participant">
+                {% for p in participants %}
+                    <option value="{{p.id}}">{{ p.public_id }}</option>
+                {% endfor %}
+
+            </select><br>
+            <input class="btn btn-primary" type="submit" value="Kopieren">
+        </form>
+    </div>
+    <div>
+
+    
+
+{% endblock content %}

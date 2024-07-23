@@ -1,0 +1,27 @@
+{% extends 'base-lang.html' %}
+{% load i18n %}
+{% load bootstrap5 %}
+
+
+
+{% block content %}
+
+
+
+    
+    <h1>Teilnehmer {{ participant.public_id }}</h1>
+
+    <form  autocomplete='off' method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+          <button type="submit" class="btn btn-primary">
+            Speichern
+          </button>
+        {% endbuttons %}
+    </form>
+
+    
+    
+{% endblock content %}
+    

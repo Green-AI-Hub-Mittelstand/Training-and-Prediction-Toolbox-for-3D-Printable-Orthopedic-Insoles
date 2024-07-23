@@ -1,0 +1,92 @@
+{% load static %}
+{% load i18n %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FootRecorder
+    {% block extra_title %}
+      
+    {% endblock extra_title %}
+      </title>
+    <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.css' %}"  rel="stylesheet">
+
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
+    <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="{% static "base.css" %}">
+    {% block extra_head %}
+      
+    {% endblock extra_head %}
+      
+  </head>
+  <body>
+    
+    {% block heading %}
+    <!-- As a heading -->
+<nav class="navbar bg-body-tertiary">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1"><a href="/">FootRecorder</a></span>
+    
+    
+    <div class="d-flex" >
+      <div class="btn-group" role="group" aria-label="Basic outlined example">
+        {% if request.user.is_superuser %}
+        <a  class="btn btn-outline-primary" href="{% url "recording-instructions" %}">Anleitung Aufzeichnung</a>
+        <a  class="btn btn-outline-primary" href="/account/two_factor/">Profil</a>
+        <a  class="btn btn-outline-primary" href="{% url "participant_overview" %}">Teilnehmerübersicht</a>        
+        <a  class="btn btn-outline-primary" href="{% url "landingUI" %}">UI</a>        
+        
+        
+
+        <a  class="btn btn-outline-primary" href="/admin">Admin</a>        
+        {% endif %}
+        
+
+        <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+          <input name="next" type="hidden" value="{{ redirect_to }}">
+          <select name="language">
+              {% get_current_language as LANGUAGE_CODE %}
+              {% get_available_languages as LANGUAGES %}
+              {% get_language_info_list for LANGUAGES as languages %}
+              {% for language in languages %}
+                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                      {{ language.name_local }} ({{ language.code }})
+                  </option>
+              {% endfor %}
+          </select>
+          <input type="submit" value="Go">
+      </form>
+
+      </div>
+    </div>
+
+
+
+    
+    
+  </div>
+</nav>
+
+
+{% endblock heading %}
+
+
+    <div class="container">
+      {% block content %}
+      
+      {% endblock content %}
+        
+    </div>
+    <br>
+    <br>
+    
+    <hr>
+    <a href="{% url "imprint" %}">Impressum</a> | <a href="{% url "dataprotection" %}">Datenschutz</a>
+    <br>
+    <br>
+    
+  </body>
+</html>

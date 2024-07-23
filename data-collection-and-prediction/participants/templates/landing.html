@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Datenaufzeichnung</h1>
+
+    <a class="btn btn-primary" href="{% url "participant" %}">Teilnehmer*in</a> 
+    <a class="btn btn-primary" href="{% url "experimenter" %}">Experimentsleitung</a>
+
+    <br><br>
+    <br><br>
+    <br><br>
+    <hr>
+    {% for ip in ips %}
+        <img src="{% url "qrcode" %}?text=http://{{ ip }}:8000/participant"><br>
+        http://{{ ip }}:8000/participant
+        <br><br>
+    <br><br>
+    <br><br>
+
+    {% endfor %}
+
+{% endblock content %}
+
+

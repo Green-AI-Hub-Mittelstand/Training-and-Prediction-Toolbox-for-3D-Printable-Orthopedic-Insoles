@@ -1,0 +1,7 @@
+*.pyc
+*.png
+.ipynb_checkpoints
+env
+scans
+*.mp4
+*.gif

@@ -1,0 +1,102 @@
+{% extends "baseUi.html" %}
+{% load bootstrap5 %}
+
+
+{% load bootstrap5 %}
+{% load humanize %}    
+{% load static %}
+{% load l10n %}
+{% load i18n %}
+
+{% load gai_filters %}
+
+
+
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url "landingUI" %}">Übersicht</a></li>
+              <li class="breadcrumb-item " aria-current="page">
+                <a href="{% url 'customer' insole.customer.id %}">
+                {{ insole.customer.first_name }} {{insole.customer.last_name  }}</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Einlage {{ insole.id }}</li>
+            </ol>
+          </nav>
+    </div>
+    <div class="col" style="display: flex; flex-direction:row; justify-content:flex-end; ">
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url "point_editor" insole.id %}" class="btn btn-primary " aria-current="page"><i class="fa-solid fa-location-pin"></i> Schlüsselpunkte</a>
+            <a href="#" class="btn btn-primary active"><i class="fa-solid fa-sliders"></i> Parameter</a>
+            
+          </div>
+
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col">
+
+        <h2>Parameter bearbeiten</h2>
+        
+        
+    </div>
+</div>
+
+
+
+<form method="post" class="form">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            
+                <h4>Links</h4>
+                {% if insoleParametersFormLeft.errors %}
+                <ul>
+                  {% for error in form.errors %} 
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}  
+    
+            {% bootstrap_form insoleParametersFormLeft %}
+        </div>
+        <div class="col">
+            <h4>Rechts</h4>
+            
+            
+            {% if insoleParametersFormRight.errors %}
+                <ul>
+                  {% for error in form.errors %} 
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}  
+    
+            {% bootstrap_form insoleParametersFormRight %}
+            </div>
+        </div>
+        <div class="row">
+<div class="col">
+    <button type="submit" class="btn btn-primary">
+        Speichern
+      </button>
+
+</div>
+
+        </div>
+            </form>
+
+
+
+            
+{% endblock content %}

@@ -1,0 +1,7 @@
+env
+*.pyc
+secrets.py.template
+secretToken.py
+data_orig
+.ipynb_checkpoints
+data

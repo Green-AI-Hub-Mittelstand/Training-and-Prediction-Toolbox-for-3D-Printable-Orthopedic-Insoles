@@ -1,0 +1,39 @@
+{% extends "baseUi.html" %}
+{% load static %}
+
+{% block content %}
+
+
+
+<div class="row">
+    {% comment %} <div class="btn-group" role="group" aria-label="Basic outlined example"> {% endcomment %}
+        <div class="col">
+            <a id="new_customer" class="btn btn-primary" href="{% url 'customer_new' %}"> <i class="fa-solid fa-person-circle-plus"></i> Kunden hinzufügen</a>
+        </div>
+      
+
+      {% comment %} <a  class="btn btn-outline-primary" href="/admin">Admin</a>         {% endcomment %}
+    {% comment %} </div> {% endcomment %}
+
+  </div>
+
+<table class = "table">
+    <thead>
+        <tr>
+            <th scope "col">Vorname</th>
+            <th scope "col">Nachname</th>
+            <th scope "col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in  customers %}
+
+            <tr>
+                <th scope = "row">{{customer.first_name}}</a></th>
+                <th scope = "row">{{customer.last_name}}</th>
+                <th scope = "row"><a href= "{% url "customer" customer.id %}">anzeigen</a></th>
+            </tr>
+
+        {% endfor %}
+
+{% endblock content %}

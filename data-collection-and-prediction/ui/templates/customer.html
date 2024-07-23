@@ -1,0 +1,56 @@
+{% extends "baseUi.html" %}
+{% load bootstrap5 %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url "landingUI" %}">Übersicht</a></li>
+              <li class="breadcrumb-item active" aria-current="page">{{ customer.first_name }} {{customer.last_name  }}</li>
+            </ol>
+          </nav>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col">
+    
+      <a id="new_customer" class="btn btn-primary" href="{% url 'customer_insoles_new' customer.id%}"><i class="fa-solid fa-shoe-prints"></i> Neue Einlage</a>
+        &nbsp;
+      <a id="new_customer" class="btn btn-primary" href="{% url 'new_customer_insoles_copy_from_participant' customer.id%}"><i class="fa-solid fa-copy"></i> Kopieren</a>
+    
+      {% comment %} <a  class="btn btn-outline-primary" href="/admin">Admin</a>         {% endcomment %}
+</div>    
+  </div>
+
+  <table class = "table">
+    <thead>
+        <tr>
+            <th scope "col">ID</th>
+            <th scope "col">Erstellt</th>    
+            <th scope "col"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for insole in  insoles %}
+            <tr>
+                <th scope = "row">{{insole.id}}</th>
+                <th scope = "row">{{insole.created}}</th>
+                <th scope = "row">
+                    <a href="{% url 'point_editor' insole.id %}"><i class="fa-solid fa-location-pin"></i> Schlüsselpunkte</a>
+                    &nbsp;
+                    <a href="{% url 'param_editor' insole.id %}"><i class="fa-solid fa-sliders"></i> Parameter</a>
+                    
+                </th> 
+            </tr>
+            
+        {% endfor %}
+
+    
+
+{% endblock content %}

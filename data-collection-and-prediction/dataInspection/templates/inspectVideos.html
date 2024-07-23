@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load humanize %}    
+{% load static %}
+{% load l10n %}
+{% load bootstrap5 %}
+
+{% load gai_filters %}
+
+
+
+
+{% block extra_head %}
+      
+      <script src="{% static "inspection/fabric.js" %}"></script>
+      <script src="{% static "inspection/handlebars.js" %}"></script>
+      <script src="{% static "inspection/notify.min.js" %}"></script>
+      <script src="{% static "inspection/lightbox.min.js" %}"></script>
+      <!-- Define the Handlebars template -->
+<script id="poiFormTemplate" src="{% static "inspection/templates/poiForm.js" %}"></script>
+<script src="{% static "inspection/templates/matchingForm.js" %}"></script>
+
+      <script src="{% static "inspection/pointInspection.js" %}"></script>
+      <script src="{% static "inspection/footprintMatching.js" %}"></script>
+      
+      <link rel="stylesheet" href="{% static "inspection/inspection.css" %}">
+      <link rel="stylesheet" href="{% static "inspection/lightbox.min.css" %}">
+      <link rel="stylesheet" href="{% static "videojs/videojs.css" %}">
+
+      <style>
+        .video-js-gai{
+            width:400px !important;
+            height:700px !important;
+            {% comment %} display:block; {% endcomment %}
+        }
+      </style>
+
+      <script>
+        var foamPointChoices = {{foamPoints|safe}};
+        var foamPointChoicesShort = {{foamPointsShort|safe}};
+      </script>
+{% endblock extra_head %}
+
+{% block content_fluid %}
+
+
+
+
+<div class="row">
+ <div class="col">
+    <h2>{{ participant }}</h2>
+ </div>
+    
+</div>
+{% comment %} 
+<div class="row">
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                <tr>
+                    <th>Erstellt:</th>
+                    <td>{{participant.created}}</td>
+                </tr>
+                <tr>
+                    <th>Alter:</th>
+                    <td>{{ participant.age }}</td>
+                </tr>
+                <tr>
+                    <th>Größe in cm:</th>
+                    <td>{{ participant.height }}</td>
+                </tr>
+                <tr>
+                    <th>Gewicht in kg:</th>
+                    <td>{{ participant.weight }}</td>
+                </tr>
+                <tr>
+                    <th>Geschlecht:</th>
+                    <td>{{ participant.gender }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn links:</th>
+                    <td>{{ participant.heel_spur_left  | visualize_boolean }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn rechts:</th>
+                    <td>{{ participant.heel_spur_right  | visualize_boolean }}</td>
+                </tr>
+                
+
+
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                
+    <tr>
+        <th>Verkürzungsausgleich links in cm:</th>
+        <td>{{ participant.leg_shortening_left }}</td>
+    </tr>
+    <tr>
+        <th>Verkürzungsausgleich rechts in cm:</th>
+        <td>{{ participant.leg_shortening_right }}</td>
+    </tr>
+    <tr>
+        <th>Schuhgröße:</th>
+        <td>{{ participant.shoe_size }}</td>
+    </tr>
+    <tr>
+        <th>Schmerzpunkte:</th>
+        <td>{{ participant.pain_points }}</td>
+    </tr>
+    {% if participant.paint_points_render %}
+    <tr>
+        <th>Schmerzpunkte Datei:</th>
+        <td><a href="{{ participant.paint_points_render.url }}" target="_blank">anzeigen</a></td>
+    </tr>  
+    {% endif %}
+    
+    <tr>
+        <th>Kommentare Teilnehmer:</th>
+        <td>{{ participant.comments_participant }}</td>
+    </tr>
+    <tr>
+        <th>Kommentare Experimenter:</th>
+        <td>{{ participant.comments_experimenter }}</td>
+    </tr>
+
+
+
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col">
+        
+        <a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}" data-lightbox="foam" data-title="Linker Fuß">
+            <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}" height="100px" />
+        </a>
+        <a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}" data-lightbox="foam" data-title="Rechter Fuß">
+            <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}" height="100px" />
+        </a>
+        <a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}" data-lightbox="foam" data-title="Beide Füße">
+            <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}" height="100px" />
+        </a>
+
+        {% if participant.paint_points_render %}
+        <a href="{{ participant.pain_points_render.url }}" data-lightbox="foam" data-title="Schmerzpunkte">
+            <img src="{{ participant.pain_points_render.url }}" height="100px" />
+        </a>
+
+        {% endif %}
+
+     
+        <script>
+            lightbox.option({
+              'resizeDuration': 200,
+              'fadeDuration':200,
+              'wrapAround': true
+            })
+        </script>
+        
+    </div>
+    
+</div> {% endcomment %}
+
+<div class="row">
+    <div class="col">        
+        <h2>Linke Füße</h2>
+        
+        {% for csv in participant.left_csvs  %}
+        
+        {% if csv.animation  %}
+
+        {% if csv.animation.animation %}
+        
+        
+        
+<video
+    id="my-video"
+    class="video-js-gai"
+    controls
+    preload="auto"
+    width="640"
+    height="264"
+    {% if csv.animation.animationPoster %}
+    poster="{{ csv.animation.animationPoster.url }}"
+    {% else %}
+    {% endif %}
+    
+    {% comment %} data-setup="{}" {% endcomment %}
+  >
+    <source src="{{ csv.animation.animation.url  }}" type="video/mp4" />
+    
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a
+      web browser that
+      <a href="https://videojs.com/html5-video-support/" target="_blank"
+        >supports HTML5 video</a
+      >
+    </p>
+  </video>
+        
+  {% endif %}
+        {% endif %}
+        
+            
+        {% endfor %}
+    </div>
+
+    <div class="col">        
+        <h2>Rechte Füße</h2>
+
+
+
+        {% for csv in participant.right_csvs  %}
+        
+        {% if csv.animation  %}
+
+        {% if csv.animation.animation %}
+        
+        
+        
+<video
+    id="my-video"
+    class="video-js-gai"
+    controls
+    preload="auto"
+    width="640"
+    height="264"
+    {% if csv.animation.animationPoster %}
+    poster="{{ csv.animation.animationPoster.url }}"
+    {% else %}
+    {% endif %}
+    
+    {% comment %} data-setup="{}" {% endcomment %}
+  >
+    <source src="{{ csv.animation.animation.url  }}" type="video/mp4" />
+    
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a
+      web browser that
+      <a href="https://videojs.com/html5-video-support/" target="_blank"
+        >supports HTML5 video</a
+      >
+    </p>
+  </video>
+        
+  {% endif %}
+        {% endif %}
+        
+            
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+<script src="{% static "videojs/videojs.js" %}"></script>
+
+{% endblock content_fluid %}
+    

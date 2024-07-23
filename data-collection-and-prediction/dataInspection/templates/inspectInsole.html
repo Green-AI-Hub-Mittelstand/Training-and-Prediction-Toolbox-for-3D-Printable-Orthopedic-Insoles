@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load humanize %}    
+{% load static %}
+{% load l10n %}
+{% load bootstrap5 %}
+
+{% load gai_filters %}
+
+
+
+
+{% block extra_head %}
+      <script src="{% static "inspection/fabric.js" %}"></script>
+      <script src="{% static "inspection/handlebars.js" %}"></script>
+      <script src="{% static "inspection/notify.min.js" %}"></script>
+      <script src="{% static "inspection/lightbox.min.js" %}"></script>
+      <!-- Define the Handlebars template -->
+<script id="poiFormTemplate" src="{% static "inspection/templates/poiForm.js" %}"></script>
+<script src="{% static "inspection/templates/matchingForm.js" %}"></script>
+
+      <script src="{% static "inspection/pointInspection.js" %}"></script>
+      <script src="{% static "inspection/footprintMatching.js" %}"></script>
+      
+      <link rel="stylesheet" href="{% static "inspection/inspection.css" %}">
+      <link rel="stylesheet" href="{% static "inspection/lightbox.min.css" %}">
+
+      <script>
+        var foamPointChoices = {{foamPoints|safe}};
+        var foamPointChoicesShort = {{foamPointsShort|safe}};
+      </script>
+{% endblock extra_head %}
+
+{% block content_fluid %}
+
+
+
+
+<div class="row">
+ <div class="col">
+    <h2>{{ participant }}</h2>
+ </div>
+    
+</div>
+
+<div class="row">
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                <tr>
+                    <th>Erstellt:</th>
+                    <td>{{participant.created}}</td>
+                </tr>
+                <tr>
+                    <th>Alter:</th>
+                    <td>{{ participant.age }}</td>
+                </tr>
+                <tr>
+                    <th>Größe in cm:</th>
+                    <td>{{ participant.height }}</td>
+                </tr>
+                <tr>
+                    <th>Gewicht in kg:</th>
+                    <td>{{ participant.weight }}</td>
+                </tr>
+                <tr>
+                    <th>Geschlecht:</th>
+                    <td>{{ participant.gender }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn links:</th>
+                    <td>{{ participant.heel_spur_left  | visualize_boolean }}</td>
+                </tr>
+                <tr>
+                    <th>Fersensporn rechts:</th>
+                    <td>{{ participant.heel_spur_right  | visualize_boolean }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a title="Im Admin bearbeiten"  href="{% url 'admin:participants_participant_change' participant.id %}"><i class="fa-solid fa-table"></i></a>
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div class="col">
+        <table class="table table-light">
+            <tbody>
+                
+    <tr>
+        <th>Verkürzungsausgleich links in cm:</th>
+        <td>{{ participant.leg_shortening_left }}</td>
+    </tr>
+    <tr>
+        <th>Verkürzungsausgleich rechts in cm:</th>
+        <td>{{ participant.leg_shortening_right }}</td>
+    </tr>
+    <tr>
+        <th>Schuhgröße:</th>
+        <td>{{ participant.shoe_size }}</td>
+    </tr>
+    <tr>
+        <th>Schmerzpunkte:</th>
+        <td>{{ participant.pain_points }}</td>
+    </tr>
+    {% if participant.paint_points_render %}
+    <tr>
+        <th>Schmerzpunkte Datei:</th>
+        <td><a href="{{ participant.paint_points_render.url }}" target="_blank">anzeigen</a></td>
+    </tr>  
+    {% endif %}
+    
+    <tr>
+        <th>Kommentare Teilnehmer:</th>
+        <td>{{ participant.comments_participant }}</td>
+    </tr>
+    <tr>
+        <th>Kommentare Experimenter:</th>
+        <td>{{ participant.comments_experimenter }}</td>
+    </tr>
+
+
+
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col">
+        
+        <a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}" data-lightbox="foam" data-title="Linker Fuß">
+            <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.leftFoot.url }}" height="100px" />
+        </a>
+        <a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}" data-lightbox="foam" data-title="Rechter Fuß">
+            <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.rightFoot.url }}" height="100px" />
+        </a>
+        <a href="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}" data-lightbox="foam" data-title="Beide Füße">
+            <img src="{{ participant.uploaded_foam_imprint.foamprintanalysis.scaledImage.url }}" height="100px" />
+        </a>
+    
+        {% if participant.pain_points_render %}
+        <a href="{{ participant.pain_points_render.url }}" data-lightbox="foam" data-title="Schmerzpunkte">
+            <img src="{{ participant.pain_points_render.url }}" height="100px" />
+        </a>
+
+        {% endif %}
+
+        <a class="btn btn-primary " href="{% url "inspectVideos" participant.id %}"><i class="fa-regular fa-file-video"></i> Videos anschauen</a>
+
+        {% comment %} <a name="" id="" class="btn btn-primary" href="#" role="button"></a> {% endcomment %}
+
+        <script>
+            lightbox.option({
+              'resizeDuration': 200,
+              'fadeDuration':200,
+              'wrapAround': true
+            })
+        </script>
+        
+    </div>
+    
+</div>
+
+
+<form method="post" class="form">
+    {% csrf_token %}
+<div class="row">
+    <div class="col-3">
+
+
+
+        
+        <h4>Schaumabdruck links</h4><br>
+        <input type="hidden" id="distance_left" />
+        
+        <div class="point-identifier-container row" id="points-left" >
+        </div>
+    </div>
+
+    <div class="col-3">
+        <h4>Links</h4>
+        {% if insoleLeftForm.errors %}
+        <ul>
+          {% for error in form.errors %} 
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}  
+
+
+        {% bootstrap_form insoleLeftForm %}
+    </div>
+
+
+    <div class="col-3">
+        <h4>Schaumabdruck rechts</h4><br>
+        <input type="hidden"  id="distance_right" />
+        <div class="point-identifier-container row" id="points-right" ></div>
+    </div>
+
+    <div class="col-3">
+        <h4>Rechts</h4>
+        {% if insoleRightForm.errors %}
+        <ul>
+          {% for error in form.errors %} 
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}  
+        {% bootstrap_form insoleRightForm %}
+    </div>
+
+</div>
+<button type="submit" class="btn btn-primary">
+    Speichern
+  </button>
+</form>
+
+
+<div class="row">
+    <div class="col">
+
+        <script>
+            class FoamPointDefinitions {
+                static VORDERSTER_PUNKT = 0;
+                
+                static ZEHE_1 = 1;
+                static ZEHE_2 = 2;
+                static ZEHE_3 = 3;
+                static ZEHE_4 = 4;
+                static ZEHE_5 = 5;
+                
+                static BALLENPUNKT_INNEN = 6;
+                static BALLENPUNKT_AUSSEN = 7;
+                
+                static MITTELFUSSKOEPFCHEN_1 = 8;
+                static MITTELFUSSKOEPFCHEN_2 = 9;
+                static MITTELFUSSKOEPFCHEN_3 = 10;
+                static MITTELFUSSKOEPFCHEN_4 = 11;
+                static MITTELFUSSKOEPFCHEN_5 = 12;
+                
+                static PELOTTENPUNKT = 13;
+                
+                static BASIS_MFK_5 = 14;
+                
+                static LAENGSGEWOELBESTUETZE = 15;
+                static FERSENSPORNPUNKT = 16;
+                static FERSENMITTELPUNKT = 17;
+                static FERSENBREITE_AUSSEN = 18;
+                static FERSENBREITE_INNEN = 19;
+                
+                static HINTERSTER_PUNKT = 20;
+                static SCHNITTACHSE = 21;
+                
+                static UNRECOGNIZED = -1;
+            }
+            
+            function getPointByType(points, type){
+                var found = null;
+
+                points.forEach(function(p){
+                    if(p.pointType == type){
+                        found = p;
+                    }
+                });
+
+                return found;
+            }
+
+            function distanceBetweenPoints(p1, p2) {
+                const deltaX = p2.x - p1.x;
+                const deltaY = p2.y - p1.y;
+                return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            }
+
+            function dist(points, p1, p2){
+                var p1Inst = getPointByType(points, p1);
+                var p2Inst = getPointByType(points, p2);
+
+                return Math.floor( distanceBetweenPoints(p1Inst, p2Inst)/10);
+            }
+        </script>
+        
+
+        <script>
+            var leftPoints = {{leftPoints | safe }};
+            var rightPoints = {{rightPoints | safe }};           
+
+            var initialZoom = 0.3;
+            var width = 400;
+            var height=850;
+
+            renderPointEditor("points-left", "{{ participant.analyzedFoamPrint.leftFoot.url }}", leftPoints, "left", {{participant.public_id}}, false, initialZoom, width, height, (d)=>{
+                $('#distance_left').val(d);
+            });
+
+            renderPointEditor("points-right", "{{ participant.analyzedFoamPrint.rightFoot.url }}",  rightPoints, "right", {{participant.public_id}}, false, initialZoom, width, height, (d)=>{
+                $('#distance_right').val(d)
+            });
+
+            $('.data-copy-button').click((e)=>{
+                // decide for left or right
+                var button = $(e.target);
+                var inputId = button.attr('data-input-id');
+                var action = button.attr('data-action');
+                var foot = inputId.split("-")[0].split("_")[1];
+                console.log("foot",foot);
+
+                var points = null;
+                var input = $('#'+inputId);
+
+                if (foot == "left"){
+                    points = leftPoints;    
+                }else{
+                    points = rightPoints;
+                }
+
+                if(action == "length"){
+                    let d = dist(points,FoamPointDefinitions.HINTERSTER_PUNKT, FoamPointDefinitions.VORDERSTER_PUNKT );
+                    input.val(d);
+                }
+
+                
+                if(action == "front-width"){
+                    let d = dist(points,FoamPointDefinitions.BALLENPUNKT_INNEN, FoamPointDefinitions.BALLENPUNKT_AUSSEN );
+                    input.val(d);
+                }
+
+                
+                if(action == "back-width"){
+                    let d = dist(points,FoamPointDefinitions.FERSENBREITE_AUSSEN, FoamPointDefinitions.FERSENBREITE_INNEN );
+                    input.val(d);
+                }
+
+                
+
+                
+
+                
+            })
+
+        </script>     
+        
+        
+        <script>
+            
+
+
+        </script>
+    </div>
+</div>
+
+
+
+
+{% endblock content_fluid %}
+    

@@ -1,0 +1,6 @@
+{% extends "preview/preview_base.html" %}
+
+{% block preview %}
+    <img style="max-width:900px; max-height:900px" src="{% url "render20percentNativeCSV" file.id %}">
+    {% comment %} <img src="{% url "render20percentCSV" file.id %}"> {% endcomment %}
+{% endblock preview  %}

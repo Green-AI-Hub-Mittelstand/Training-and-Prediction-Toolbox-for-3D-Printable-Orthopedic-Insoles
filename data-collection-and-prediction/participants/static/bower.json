@@ -1,0 +1,22 @@
+{
+  "name": "static",
+  "authors": [
+    "Felix Kosmalla <felix.kosmalla@dfki.de>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "bootstrap": "^5.3.2"
+  }
+}

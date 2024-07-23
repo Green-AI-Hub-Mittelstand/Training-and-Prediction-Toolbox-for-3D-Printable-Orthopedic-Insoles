@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static "2fa/bs.css" %}" rel="stylesheet" media="screen">
+  <script defer src="{% static "2fa/jq.js" %}"></script>
+  <script defer src="{% static "2fa/bs.js" %}"></script>
+  {% block extra_media %}{% endblock %}
+</head>
+<body>
+  
+    
+  <div class="login-mask">
+  {% block content_wrapper %}
+    
+      {% block content %}{% endblock %}
+    
+  {% endblock %}
+  <div class="imprint-links">
+    <span>
+      <a href="{% url "imprint" %}">Impressum</a> | <a href="{% url "dataprotection" %}">Datenschutz</a>
+
+    </span>
+  </div>
+
+  </div>
+
+
+  <style>
+
+    .imprint-links{    
+        text-align:center;
+        margin-top:50px;
+      
+    }
+
+    .imprint-links span{
+      padding:20px;
+      background-color:#fff;
+      border-radius:20px;
+    }
+
+    .login-mask{
+      padding-top:200px;
+    }
+
+  
+
+    .focus-panel,.white-bg{
+      background-color: #fff;
+      padding:20px;
+      border-radius:20px;
+    }
+
+    body{
+      background-image: url("/static/2fa/dfki_teams_background_10.jpg");
+      background-size: cover;
+  background-repeat: no-repeat;
+      
+    }
+  </style>
+</body>
+</html>

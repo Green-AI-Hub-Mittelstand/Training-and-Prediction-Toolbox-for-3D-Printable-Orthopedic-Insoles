@@ -1,0 +1,11 @@
+{% extends 'admin/base.html' %} {% block extrahead %}{{ block.super }}
+{% if IS_REMOTE %}
+<style>
+    :root {
+      --primary:#c80400;
+      
+    }
+  </style>
+  
+{% endif %}
+{% endblock %}

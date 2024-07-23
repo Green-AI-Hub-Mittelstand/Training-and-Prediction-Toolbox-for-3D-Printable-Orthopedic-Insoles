@@ -1,0 +1,13 @@
+
+IS_REMOTE = False # False would be used for the client, True for the remote / cloud instance
+
+REMOTE_HOST = "http://127.0.0.1:7777" # only needed when snychronizing - set accordingly
+
+
+CSV_PATH = "C:\Users\greenai\Desktop\csv\"  # where the Pressure Plate software stores the CSVs
+
+READ_ONLY_SECRET = ""   # Used for some views that require read only access - choose freely but secure
+GREENAI_SECRET = ""     # Used for all API requests - choose freely but secure
+AUTH_TOKEN = ""         # This is used for synchronisation and should be set to a Token of a user with appropriate rights on the client side
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.10']

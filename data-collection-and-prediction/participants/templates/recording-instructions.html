@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Anleitung Datenaufzeichnung<h1>
+    
+    <h2>Generelles</h2>
+    <h3>Zweck</h3>
+        <p>Wir wollen den Prozess von 3D gedrucken orhtopädischen Einlagen verbessern. Dazu wollen wir eine künstliche Intelligenz trainieren, die Anhand von eine Druckverteilungsmessung der Füße ein 3D Modell einer Einlage generieren kann. Zum Trainieren der KI benötigen wir Beispiel wie Füße und Einlagen aussehen. Das soll während der Datenaufzeichnung passieren. Die Teilnehmer treten in einen Trittschaum und werden gebeten eine Aufzeichnung mit der Druckemssplatte zu machen. </p>
+
+    <h3>Vorbereitung</h3>
+        <ol>
+            <li>Web GUI Server starten -> auf dem Desktop das Icon rechts anklicken und "mit Powershell ausführen" anlicken.</li>
+            <li>TP Link Adapter anstecken</li>
+            <li>Darauf achten, dass W-LAN an ist -> über die Task Leiste, muss blau sein</li>
+            <li>Platte anschalten, Power Symbol muss leuchten/blinken
+                <img src="{% static 'manual/platte.png' %}" width="100px">
+            </li>
+            <li>Medilogic Software starten -> Desktop verknüpfung</li>
+            <li>Über "Teilnehmerübersicht" neuen Teilnehmer anlegen -> auch wenn es schon einen aktiven TN gibt.</li>
+        </ol>
+
+    <h3>Vorgehen</h3>
+    
+        <ol>
+            <li>Teilnehmer*in kommt rein, wird begrüßt und Zweck der Erhebung wird erklärt (s.o.).</li>
+            <li>Ihr wird das Tablet ausgehändigt auf dem schon Datenschutzerklärung geöffnet ist.<br>
+                <strong>Wichtig:</strong>Wir brauchen den Namen und Unterschrift für die Datenschutzerklärung. Die E-Mail Adresse ist optional, wenn die Teilnehmer eine Kopie der Erklärung erhalten wollen.<br>
+                <strong>TL;DR</strong> Die Daten der Füße werden anonym erfasst und werden nur vom XX und XX verwendet.                    
+            </li>
+            <li>Nach der Datenschutzerklärung kommt ein generelles Fragebogen<br> <strong>Am besten wird dieser dem Teilnehmer erst erklärt und dann in die Hand gedrückt (je nach technischen Fähigkeiten auch gemeinsam ausfüllen)</strong>
+                <ul>
+                    <li>Verkürzungsausgleich und Fersensporn: Wenn TN nicht wissen, was das ist, brauchen Sie das nicht auszfüllen - dann betrifft es sie vermutlich nicht.</li>
+                </ul>
+            </li>
+            <li>
+                Ist beides ausgefüllt geht es mit den Fußabdrücken (s.u.) weiter.
+
+            </li>
+            <li>Ist alles aufgezeichnet, wird der TN (sofern nicht DFKI) kompensiert (s.u) und verabschiedet</li>
+            <li>Danach werden die Druckmessdaten ins System kopiert (s.u)</li>
+        </ol>
+
+        <h2>Datenerhebungs GUI</h2>
+        <h3>Startseite</h3>
+
+        <ol>
+            <li>Hier kann man zwischen Teilnehmer und Experimentsleitung wählen. Der Link zur Teilnehmer / Tablet ansicht ist im QR Code - hier die passende IP auswählen</li>
+        </ol>
+        <h3>Teilnehmerübersicht</h3>
+    <p>
+        <img src="{% static "manual/uebersicht.png" %}"><br>
+        Um während der Datenerhebung keine Fehler zu machen, wird durch die Aufnahme geleitet. Klickt man auf Teilnehmerübersicht sieht man die aktuellen Teilnehmer. Es gibt immer nur <strong>einen</strong> aktiven Teilnehmer (siehe 3). Vor jedem neuen Aufnahme muss auf "neuer Teilnehmer*in" (siehe 1) geklickt werden. Im System gibt es zwei Teilnehmer IDs - das ist dem geschuldet, dass Daten vom Laptop auf einen Server übetragen werden, was zu unterschiedlichen Datenbank IDs führt. <strong>greenai# ist die Relevante, system# kann ignoriert werden</strong> (siehe 4). Nachdem ein Schaumabdruck gemacht wurde, wird dieser an den Schuhmacher weitergeleitet damit er diesen labelt (mit schwarzen Punkten markiert). Die Schaumabdrücke werden dann eingescannt und hochgeladen (siehe 2). </p>
+
+        <h3>Datenerhebung Ansicht</h3>
+        <p>Hier wird der/die Experimentsleiter/in durch die Aufnahme geführt. Bitte entsprechend befolgen.<p>
+    
+        
+        <h2>Messungen</h2>
+        <h3>Trittschaum</h3>
+        <p>
+        <ul>
+            <li>Teilnehmer behält die Socken an</li>
+            <li>Die Messung wird im Stehen gemacht und der Fuß unter voller Belastung senkrecht von oben in den Trittschaum gedrückt.</li>
+            <li>Zuerst einen Fußabdruck machen, den Fuß wieder aus dem Schaum nehmen und dann erst den anderen Abdruck nehmen.</li>
+            <li>Zur Stabilisierung halten sich die Probanden mit einer Hand, z.B. an einer Stuhllehne, fest.</li>
+            <li>Die am Strumpf verbleibenden Trittschaum-Reste können mit einem Einmal-Papiertuch entfernt werden.</li>
+            <li>Der Trittschaum <strong>wird mit einer Nummer (*1)</strong> versehen, sowohl auf dem Schaum selbst, als auch an der Stirnseite.</li>
+            <li>Händedesinfektionsmittel bei Bedarf benutzen.</li>
+          </ul>
+
+          <img src="{% static "manual/teilnehmer-nummer.png" %}"></p>
+          
+
+
+
+    <h3>Medilogic Software</h3>
+    <h4>Gehen</h4>
+    <ul>
+        <li>Der Proband geht mit Strümpfen über die Messplatten mit für ihn normaler angenehmer Geschwindigkeit.</li>
+        <li>Er sollte einige Schritte vor der Messplatte starten und nach der Messplatte einige Schritte auslaufen. Der Blick sollte geradeaus gerichtet sein.</li>
+        <li>Die Messung wird gestartet (roter Aufnahme Knopf) und erst beendet, wenn 10 Doppelschritte vollständig erfasst sind, ggf weitere Messung starten. <strong>Auf die Füße gucken, und Strichliste für links und rechts führen. Der Fuß muss komplett auf einem Panel landen und nicht auf zwei.</strong></li>
+        <li>Während der Messung ist darauf zu achten, dass die Schrittabwicklung normal ist. Dies lässt sich auch an der Gangkurve erkennen. M-förmig ist normal. Nicht normale Schritte werden nicht exportiert. <img src="{% static "manual/m-kurve.png" %}" width="100%"></li>
+        <li>Beim Stoppen der Aufnahme öffnet sich ein Fenster um den Datensatz zu speichern: <ul><li>Name: Nummer des Teilnehmer</li><li>Nachname: greenai</li><li>Geburstdatum: heutiges Datum</li><li>Bemerkung: "gehen" oder "stehen"</li></ul>
+        <img src="{% static "manual/aufnahme.png" %}" width="100%">
+        <li>
+      </ul>
+
+    <h4>Stehen</h4>
+    <ul>
+        <li>Zuerst die Aufzeichnung starten</li>
+        <li>Proband steht so zur Platte, dass sich der silberne Teil links von ihm/ihr befindet.</li>
+        <li>Der Proband stellt sich mit beiden Füßen und Strümpfen auf die Messplatte</li>
+        <li>Der Proband wird gebeten zu wippen, indem er das Gewicht auf die Zehenspitzen, dann auf die Fersen verlagert. Der Fuß darf nicht von der Platte abheben.</li>
+
+        <li>Die Messung sollte möglichst natürlich erfolgen. Der Proband sollte so gewöhnlich wie möglich auf der Messplatte stehen und die Füße nicht nach der Messplatte ausrichten.</li>
+
+        <li>Den Blick möglichst geradeaus.</li>
+        <li>Nach 4-5 mal Wippen (gerne mehr) bitten nach vorne von der Matte zu steigen</li>
+            <li>Aufnahme beenden</li>
+      </ul>
+    
+      <h4>
+        Export
+      </h4>
+      <ul>
+        <li>Die Daten werden über CSV export exportiert.<br>
+            <img src="{% static "manual/export-button.png" %}" width="30%">
+            <img src="{% static "manual/export-window.png" %}" width="40%"><br>
+            <strong>Den Zielordner wie folgt bennenen: C:\Users\greenai\Desktop\csv\TEILNEHMERNUMMER\GEHEN|STEHEN\SCHRITT-NUMMER</strong>
+        </li>
+        <li>Die Messung im Stehen wird so exportiert, dass das Auf- und Absteigen nicht im Export enthalten ist.</li>
+        <li>Bei der Messung im Gehen werden die einzelnen Schritte exportiert. (das macht Akbar!)</li>
+        <li>Die Daten per Knopf "CSV Import" importieren und prüfen.</li>
+      </ul>
+      
+
+      
+
+{% endblock content %}

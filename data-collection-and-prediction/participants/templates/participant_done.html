@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">{% if error_title %}
+        {{error_title}}
+        {% else %}
+        Fertig
+        {% endif %}</h4>
+        {{ error }}
+
+        
+    </div>
+    <a href=""{% url "participant" %}>Zurück</a>
+{% endblock content %}
+    

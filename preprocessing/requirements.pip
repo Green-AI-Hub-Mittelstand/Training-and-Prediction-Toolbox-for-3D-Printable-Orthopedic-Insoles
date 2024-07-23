@@ -1,0 +1,14 @@
+numpy
+opencv-python
+jupyterlab
+matplotlib
+pdf2image
+pytesseract
+tqdm
+pandas
+imageio
+pyarrow
+qrcode[pil]
+PyMuPDF 
+qreader # Rarely, you can see an ugly ImportError related with lizbar-64.dll. If it happens, install the vcredist_x64.exe from the Visual C++ Redistributable Packages for Visual Studio 2013 https://www.microsoft.com/en-gb/download/details.aspx?id=40784
+imageio[ffmpeg]

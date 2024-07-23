@@ -1,0 +1,63 @@
+{% extends "baseUi.html" %}
+{% load bootstrap5 %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+
+        <h2>Parameter</h2>
+        
+        
+    </div>
+</div>
+
+    
+<div class="row">
+    <div class="col">
+        <br><br>
+        <div class="d-flex align-items-center">
+            
+            <strong>Berechnung läuft...&nbsp;&nbsp;&nbsp;</strong>
+            <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+          </div>
+        
+        
+    </div>
+</div>
+
+
+<script>
+
+    var insole_id = {{insole.id}};
+
+    $(function(){
+
+        $.get(Urls.predict_params_view(insole_id), function(){
+            window.location.href=Urls.param_editor(insole_id);
+        });
+
+        
+    });
+</script>
+    
+    
+{% comment %} 
+    <hr>
+    Von Teilnehmer kopieren
+
+    <form method="post" action="{% url "new_customer_insoles_copy_from_participant" customer.id %}">
+        {% csrf_token %}    
+        <select  name="participant" >
+            {% for participant in participants  %}
+                <option value="{{participant.id}}">{{ participant.public_id }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value = "Kopieren"/>
+    </form> {% endcomment %}
+
+
+
+
+{% endblock content %}

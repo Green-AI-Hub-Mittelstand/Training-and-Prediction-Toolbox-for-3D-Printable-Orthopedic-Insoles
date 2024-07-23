@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+
+  
+  flower:
+    build: .
+    volumes:
+      - ./:/code
+    ports:
+      - 7000:5555
+    command: sh -c "cd /code && celery -A dataCollection flower"
+    environment:
+      - PYTHONUNBUFFERED=1

@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  web:
+    ports:
+      - 8000:8000
+    command: sh -c "cd /code && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+  
+  flower:
+    build: .
+    volumes:
+      - ./:/code
+    ports:
+      - 8001:5555
+    command: sh -c "cd /code && celery -A dataCollection flower"
+    environment:
+      - PYTHONUNBUFFERED=1
