@@ -94,6 +94,6 @@ You will also find additional scripts that show the experiments that we did with
 <a name="license"></a>
 ## License
 
-The code is distributed under the MIT License. See the `LICENSE` file for more information.
+The code is distributed under the GPLv3 License. See the `LICENSE` file for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
