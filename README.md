@@ -101,7 +101,7 @@ Don't forget to give the project a star! Thanks again!
 <a name="license"></a>
 ## License
 
-If not otherwise specified, all code is distributed under the GPLv3 License. See the `LICENSE` file for more information.
+If not otherwise specified, all code is distributed under the MIT License. See the `LICENSE` file for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
