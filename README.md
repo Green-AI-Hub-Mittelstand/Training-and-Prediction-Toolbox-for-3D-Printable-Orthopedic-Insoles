@@ -32,7 +32,7 @@
 
 <a name="about-the-project"></a>
 # About the Project
-This toolbox was developed by the German Research Center for AI (DFKI) as part of the Green-AI Hub Mittelstand funded by the German ministry of Federal Ministry for the Environment, Nature Conservation, Nuclear Safety and Consumer Protection of Germany and managed by the "Zukunft - Umwelt - Gesellschaft" (ZUG).
+This toolbox was developed by the German Research Center for AI (DFKI) as part of the Green-AI Hub Mittelstand funded by the German Federal Ministry for the Environment, Climate Action, Nature Conservation and Nuclear Safety and managed by the "Zukunft - Umwelt - Gesellschaft" (ZUG).
 
 The project was a collaboration between the DFKI and the Herges GmbH. Its aim was the automatic prediction of parameters of a 3D model of orthopedic insoles which can be printed by a 3D printer solely based on digital pedobarography. 
 
