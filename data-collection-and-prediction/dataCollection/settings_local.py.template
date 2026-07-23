@@ -1,4 +1,17 @@
 
+# SECRET_KEY is required and read from the DJANGO_SECRET_KEY environment
+# variable (see settings.py) - the app will refuse to start without it.
+# Generate one with:
+#   python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+# For local development you can instead set it here, e.g.:
+# SECRET_KEY = "your-locally-generated-key"
+
+# DEBUG and ALLOWED_HOSTS are read from the environment variables
+# DJANGO_DEBUG and DJANGO_ALLOWED_HOSTS (see settings.py).
+# For local development you can instead set them here, e.g.:
+# DEBUG = True
+# ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
 IS_REMOTE = False # False would be used for the client, True for the remote / cloud instance
 
 REMOTE_HOST = "http://127.0.0.1:7777" # only needed when snychronizing - set accordingly
